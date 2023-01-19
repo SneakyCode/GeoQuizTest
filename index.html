@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GeoGuessr</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style type="text/css">
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #guess {
+        width: 100px;
+        height: 25px;
+        color: white;
+        background-color: red;
+        margin-top: 5px;
+      }
+
+      img {
+        padding-top: 10px;
+      }
+
+      #street-view {
+        height: 100%;
+        filter: invert(1);  
+      }
+
+      #box {
+        position: absolute;
+        top: 10px;
+        left: 5%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 20px;
+        text-align: center;
+        font-family: "Roboto", "sans-serif";
+        line-height: 30px;
+        padding-left: 10px;
+        width: 20%;
+        height: 43%;
+      }
+
+      #box {
+        margin-left: -100px;
+      }
+
+      #display {
+        color: white;
+        font-family: "Roboto", "sans-serif";
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        z-index: 5;
+        background-color: black;
+        width: 50%;
+        height: 50%;
+        text-align: center;
+        border-radius: 20px;
+        opacity: 85%;
+      }
+      p {
+        font-size: 24px;
+        top: 50px;
+        line-height: 50px;
+      }
+      #play {
+        appearance: none;
+        backface-visibility: hidden;
+        background-color: #27ae60;
+        border-radius: 8px;
+        border-style: none;
+        box-shadow: rgba(39, 174, 96, .15) 0 4px 9px;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        font-family: Inter,-apple-system, system-ui,"Segoe UI",Helvetica,Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: normal;
+        line-height: 1.5;
+        outline: none;
+        overflow: hidden;
+        padding: 13px 20px;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        transform: translate3d(0, 0, 0);
+        transition: all .3s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        vertical-align: center;
+        white-space: nowrap;
+    }
+
+    #play:hover {
+        background-color: #1e8449;
+        opacity: 1;
+        transform: translateY(0);
+        transition-duration: .35s;
+    }
+
+    #play:active {
+        transform: translateY(2px);
+        transition-duration: .35s;
+    }
+
+    #play:hover {
+        box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
+    }
+
+    span {
+      display: inline-block;
+      height: 100%;
+      vertical-align: bottom;
+      width: 250px;
+      padding-top: 200px;
+    }
+    </style>
+  </head>
+  <body>
+
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/maps.js"></script>
+    <script src="https://www.amcharts.com/lib/4/geodata/worldLow.js"></script>
+
+    <script>
+      var chart = am4core.create("chartdiv", am4maps.MapChart)
+      chart.geodata = am4geodata_worldLow
+      chart.projection = new am4maps.projections.Miller()
+      var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries())
+      polygonSeries.useGeodata = true
+      //polygonSeries.data = [{
+      //  "id": "US"
+      //}, {
+      //  "id": "CA"
+      //}, {
+      //  "id": "MX"
+      //}]
+      var polygonTemplate = polygonSeries.mapPolygons.template
+      polygonTemplate.tooltipText = "{name}"
+      polygonTemplate.fill = am4core.color("#5CAB7D")
+      polygonTemplate.propertyFields.fill = "color"
+      polygonTemplate.events.on("hit", function(ev) {
+        var data = ev.target.dataItem.dataContext
+        var info = document.getElementById("info")
+        info.innerHTML = "<h3>" + data.name + "</h3>"
+      })
+      // Create hover state and set alternative fill color
+      var hs = polygonTemplate.states.create("hover")
+      hs.properties.fill = am4core.color("#5A9367")
+
+      polygonSeries.exclude = ["AQ"]
+      chart.zoomControl = new am4maps.ZoomControl()
+
+      let score = 0
+      let panorama
+
+      var places = [
+          [{ lat: 60.171001,  lng: 24.939350 },  {country: 'Finland'}],
+          [{ lat: 48.858093,  lng: 2.294694 },   {country: 'France'}],
+          [{ lat: 51.510020,  lng: -0.134730 },  {country: 'Great Britain'}],
+          [{ lat: 41.8902,    lng: 12.4922 },      {country: 'Italy'}],
+          [{ lat: 25.195302,  lng: 55.272879 },  {country: 'United Arab Emirates'}],
+          [{ lat: 1.283404,   lng: 103.863134 },  {country: 'Singapore'}],
+          [{ lat: 29.976768,  lng: 31.135538 },  {country: 'Egypt'}],
+          [{ lat: 40.757876,  lng: -73.985592 }, {country: 'United States'}],
+          [{ lat: 52.2414349,  lng: 21.0279709 }, {country: 'Poland'}],
+      ]
+        
+      let currentPlace = places[Math.floor(Math.random() * (places.length))]
+      let coordinates = currentPlace[0]
+      let country = currentPlace[1].country
+
+      let reconfigure = () => { 
+        document.getElementById("score").innerHTML = "Your current score is: " + score
+        currentPlace = places[Math.floor(Math.random() * (places.length))]
+        coordinates = currentPlace[0]
+        country = currentPlace[1].country
+        initialize()
+      }
+
+      const guess= () => {
+        var name = document.getElementById("info").innerHTML;
+        var called = name.replace(/<|h|3|>/g, '')
+        var nameR = called.replace('/', '')
+
+        if (nameR === "Wybierz Kraj") {
+          var guess = window.alert("Nie wybrałeś kraju.")
+        } 
+        //else {
+        //  var guess = window.alert("Wybrałeś " + nameR)
+        //}
+
+        if(nameR === country) {
+          score++
+          reconfigure()
+        }
+
+        else {
+          if (nameR === "Wybierz Kraj") {
+              
+          }
+          else {
+              score--
+              reconfigure()
+          }
+                 
+        }
+
+        if (score < 0) {
+          score = 0
+          reconfigure()
+        }
+      }
+
+      // Set and configure streetview 
+      function initialize() {
+        panorama = new google.maps.StreetViewPanorama(
+          document.getElementById("street-view"),
+          {
+            position: coordinates,
+            pov: { heading: 165, pitch: 0 },
+            zoom: 1,
+          }
+        )
+      }
+      function play() {
+        document.getElementById("display").style.display = "none";
+      }
+    </script>
+
+    
+    <div id="box">
+      <h1>Jeśli wiesz, gdzie się znajdujesz, zgaduj!</h1>
+      <h2 id="score">Twój wynik to: 0</h2>
+      <div id="info"><h3>Wybierz Kraj</h3></div>
+      <div id="chartdiv"></div>
+      <button id="guess" onclick="guess()">Guess</button>
+      
+    </div>
+    <div id="display"><p>Zgadnij położenie na podstawie znanych miejsc.</p>
+      <button id="play" onclick="play()">Zagraj</button>
+      <div style="clear: both;"></div>
+      <span>Na świecie jest wiele charakterystycznych miejsc, lecz czy potrafisz prawidłowo wskazać położenie niektórych z nich?</span>
+    </div>
+    <div id="street-view"></div>
+    
+    
+
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVMdw5_tD38SJmetbrM6WqLHrTXa3GEV0&callback=initialize&libraries=&v=weekly"
+      async
+    ></script>
+  </body>
+</html>
