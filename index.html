@@ -3,6 +3,7 @@
   <head>
     <title>GeoGuessr</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="icon" type="image/x-icon" href="geoguessr.png">
     <style type="text/css">
       html,
       body {
@@ -151,7 +152,7 @@
         var info = document.getElementById("info")
         info.innerHTML = "<h3>" + data.name + "</h3>"
       })
-      // Create hover state and set alternative fill color
+
       var hs = polygonTemplate.states.create("hover")
       hs.properties.fill = am4core.color("#5A9367")
 
@@ -164,21 +165,71 @@
       var places = [
           [{ lat: 60.171001,  lng: 24.939350 },  {country: 'Finland'}],
           [{ lat: 48.858093,  lng: 2.294694 },   {country: 'France'}],
-          [{ lat: 51.510020,  lng: -0.134730 },  {country: 'Great Britain'}],
+          [{ lat: 51.510020,  lng: -0.134730 },  {country: 'United Kingdom'}],
           [{ lat: 41.8902,    lng: 12.4922 },      {country: 'Italy'}],
           [{ lat: 25.195302,  lng: 55.272879 },  {country: 'United Arab Emirates'}],
           [{ lat: 1.283404,   lng: 103.863134 },  {country: 'Singapore'}],
           [{ lat: 29.976768,  lng: 31.135538 },  {country: 'Egypt'}],
           [{ lat: 40.757876,  lng: -73.985592 }, {country: 'United States'}],
           [{ lat: 52.2414349,  lng: 21.0279709 }, {country: 'Poland'}],
+          [{ lat: 52.5160717,  lng: 13.3777602 }, {country: 'Germany'}],
+          [{ lat: 55.7444462,  lng: 37.6185127 }, {country: 'Russia'}],
+          [{ lat: 62.2971452,  lng: 150.5206094 }, {country: 'Russia'}],
+          [{ lat: 55.0678346,  lng: -3.6179112 }, {country: 'United Kingdom'}],
+          [{ lat: 53.348916,  lng: -6.2761663 }, {country: 'Ireland'}],
+          [{ lat: 59.9085366,  lng: 10.6818839 }, {country: 'Norway'}],
+          [{ lat: 64.1546127,  lng: -21.9495737 }, {country: 'Iceland'}],
+          [{ lat: 64.1795079,  lng: -51.7433088 }, {country: 'Greenland'}],
+          [{ lat: 45.4270069,  lng: -75.6956866 }, {country: 'Canada'}],
+          [{ lat: 39.9648968,  lng: -82.9507213 }, {country: 'United States'}],
+          [{ lat: 19.4234719,  lng: -99.1658815 }, {country: 'Mexico'}],
+          [{ lat: 9.934137,  lng: -84.0670381 }, {country: 'Costa Rica'}],
+          [{ lat: 46.9506393,  lng: 7.4371031 }, {country: 'Switzerland'}],
+          [{ lat: 49.6111026,  lng: 6.1334676 }, {country: 'Luxembourg'}],
+          [{ lat: 53.8986117,  lng: 27.5611223 }, {country: 'Belarus'}],
+          [{ lat: 35.8987057,  lng: 14.5139843 }, {country: 'Malta'}],
+          [{ lat: 39.234431,  lng: 9.1204512 }, {country: 'Italy'}],
+          [{ lat: -15.7988231,  lng: -47.8775737 }, {country: 'Brazil'}],
+          [{ lat: -29.3135181,  lng: 27.4894302 }, {country: 'Lesotho'}],
+          [{ lat: 12.1108542,  lng: 15.0371574 }, {country: 'Chad'}],
+          [{ lat: -9.4315674,  lng: 147.1910862 }, {country: 'Papua New Guinea'}],
+          [{ lat: -33.8692897,  lng: 151.2028781 }, {country: 'Australia'}],
+          [{ lat: 44.8139484,  lng: 20.4630057 }, {country: 'Serbia'}],
+          [{ lat: -33.4360263,  lng: -70.6432148 }, {country: 'Chile'}],
+          [{ lat: -34.6037864,  lng: -58.3837304 }, {country: 'Argentina'}],
       ]
         
+      var centralEu = ['Germany', 'Poland', 'Czechia', 'Slovakia', 'Austria', 'Hungary']
+      var westernEu = ['Germany', 'Austria', 'Liechtenstein', 'Switzerland', 'France', 'Italy', 'United Kingdom']
+      var easternEu = ['Poland', 'Belarus', 'Moldova', 'Romania', 'Ukraine', 'Russia', 'Lithuania']
+      var balkan = ['Slovenia', 'Croatia', 'Bosnia and Herzegovina', 'Romania', 'Serbia', 'Montenegro', 'Kosovo', 'Albania', 'North Macedonia', 'Bulgaria', 'Greece']
+      var islandsEu = ['United Kingdom', 'Ireland', 'Isle of Man', 'Aland Islands', 'Faroe Islands', 'Cyprus', 'Malta']
+      var netherlands = ['Netherlands', 'Belgium', 'Luxembourg', 'Denmark']
+      var scandinavia = ['Denmark', 'Norway', 'Sweden', 'Finland', 'Iceland', 'Greenland']
+      var baltic = ['Lithuania', 'Latvia', 'Estonia']
+
+      var northAmerica = ['United States', 'Canada', 'Mexico']
+      var latinAmerica = ['Cuba', 'Bahamas', 'Jamaica', 'Haiti', 'Dominican Republic', 'Puerto Rico', 'Trinidad and Tobago', 'Guatemala', 'Belize', 'El Salvador', 'Honduras', 'Nicaragua', 'Costa Rica', 'Panama']
+      var southAmerica = ['Colombia', 'Venezuela', 'Ecuador', 'Guyana', 'Suriname', 'French Guiana', 'Brazil', 'Peru', 'Bolivia', 'Paraguay', 'Chile', 'Uruguay', 'Argentina']
+
+      var arabia = ['Georgia', 'Azerbaijan', 'Armenia', 'Türkiye', 'Israel', 'Lebanon', 'Palestinian Territories', 'Syria', 'Jordan', 'Iraq', 'Iran', 'Saudi Arabia', 'Egypt', 'Bahrain', 'Kuwait', 'Qatar', 'United Arab Emirates', 'Yemen', 'Oman']
+      var stan = ['Kazakhstan', 'Uzbekistan', 'Kyrgystan', 'Tajikistan', 'Turkmenistan', 'Iran', 'Afghanistan', 'Pakistan']
+      var hindi = ['China', 'India', 'Nepal', 'Bhutan', 'Bangladesh']
+      var monsun = ['Myanmar', 'Thailand', 'Cambodia', "Lao People's Democratic Republic", 'Vietnam', 'Malaysia', 'Philippines', 'Brunei', 'Singapur', 'Indonesia']
+      var islandsAs = ['Japan', 'North Korea', 'South Korea', 'Taiwan', 'Philippines', 'Sri Lanka']
+
+      var australia = ['Papua New Guinea', 'Australia', 'New Zealand', 'Fiji']
+
+      var northAf = ['Morocco', 'Western Sahara', 'Algeria', 'Tunisia', 'Libya', 'Egypt', 'Mauritania', 'Mali', 'Niger', 'Chad', 'Sudan', 'Senegal', 'Gambia', 'Guinea', 'Burkina Faso', 'Nigeria', 'Benin']
+      var centralAf = ['Cameroon', 'Democratic Republic of Congo', 'Kenya', 'Eritrea', 'Somalia', 'Ethiopia', 'Uganda', 'Angola', 'Zambia', 'Tanzania']
+      var southAf = ['Namibia', 'Botswana', 'Zimbabwe', 'Mozambique', 'Madagascar', 'South Africa', 'Eswatini', 'Lesotho']
+
       let currentPlace = places[Math.floor(Math.random() * (places.length))]
       let coordinates = currentPlace[0]
       let country = currentPlace[1].country
 
       let reconfigure = () => { 
-        document.getElementById("score").innerHTML = "Your current score is: " + score
+        document.getElementById("score").innerHTML = "Twój wynik to: " + score
         currentPlace = places[Math.floor(Math.random() * (places.length))]
         coordinates = currentPlace[0]
         country = currentPlace[1].country
@@ -198,17 +249,95 @@
         //}
 
         if(nameR === country) {
-          score++
+          score = score + 10
           reconfigure()
         }
 
         else {
           if (nameR === "Wybierz Kraj") {
-              
           }
           else {
-              score--
+            window.alert("Prawidłowa odpowiedź to: " + country)
+            if(easternEu.includes(country) && easternEu.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(westernEu.includes(country) && westernEu.includes(nameR)) {
+            score = score + 5
+            reconfigure()
+            }
+            if(balkan.includes(country) && balkan.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(centralEu.includes(country) && centralEu.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(baltic.includes(country) && baltic.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(islandsEu.includes(country) && islandsEu.includes(nameR)) {
+            score = score + 7
+            reconfigure()
+            }
+            if(netherlands.includes(country) && netherlands.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(scandinavia.includes(country) && scandinavia.includes(nameR)) {
+            score = score + 5
+            reconfigure()
+            }
+            if(northAmerica.includes(country) && northAmerica.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(southAmerica.includes(country) && southAmerica.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(latinAmerica.includes(country) && latinAmerica.includes(nameR)) {
+            score = score + 7
+            reconfigure()
+            }
+            if(arabia.includes(country) && arabia.includes(nameR)) {
+            score = score + 5
+            reconfigure()
+            }
+            if(hindi.includes(country) && hindi.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(monsun.includes(country) && monsun.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(stan.includes(country) && stan.includes(nameR)) {
+            score = score + 7
+            reconfigure()
+            }
+            if(islandsAs.includes(country) && islandsAs.includes(nameR)) {
+            score = score + 5
+            reconfigure()
+            }
+            if(northAf.includes(country) && northAf.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(centralAf.includes(country) && centralAf.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            if(southAf.includes(country) && southAf.includes(nameR)) {
+            score = score + 6
+            reconfigure()
+            }
+            else {
+              score = score - 3
               reconfigure()
+            }
           }
                  
         }
@@ -219,7 +348,6 @@
         }
       }
 
-      // Set and configure streetview 
       function initialize() {
         panorama = new google.maps.StreetViewPanorama(
           document.getElementById("street-view"),
@@ -230,8 +358,9 @@
           }
         )
       }
+
       function play() {
-        document.getElementById("display").style.display = "none";
+        document.getElementById("display").style.display = "none"
       }
     </script>
 
