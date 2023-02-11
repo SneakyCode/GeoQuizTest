@@ -119,8 +119,14 @@
       display: inline-block;
       height: 100%;
       vertical-align: bottom;
-      width: 250px;
-      padding-top: 200px;
+      width: 350px;
+      padding-top: 150px;
+    }
+
+    @media only screen and (min-width: 360px) and (max-width: 719px) {
+      #box {
+        left: 15%;
+      }
     }
     </style>
   </head>
@@ -197,6 +203,7 @@
           [{ lat: 44.8139484,  lng: 20.4630057 }, {country: 'Serbia'}],
           [{ lat: -33.4360263,  lng: -70.6432148 }, {country: 'Chile'}],
           [{ lat: -34.6037864,  lng: -58.3837304 }, {country: 'Argentina'}],
+          [{ lat: 9.0663116,  lng: 7.5082849 }, {country: 'Nigeria'}],
       ]
         
       var centralEu = ['Germany', 'Poland', 'Czechia', 'Slovakia', 'Austria', 'Hungary']
@@ -376,7 +383,9 @@
     <div id="display"><p>Zgadnij położenie na podstawie znanych miejsc.</p>
       <button id="play" onclick="play()">Zagraj</button>
       <div style="clear: both;"></div>
-      <span>Na świecie jest wiele charakterystycznych miejsc, lecz czy potrafisz prawidłowo wskazać położenie niektórych z nich?</span>
+      <span>Na świecie jest wiele charakterystycznych miejsc, lecz czy potrafisz prawidłowo wskazać położenie niektórych z nich?<br/>
+
+      Update log:<br/>29.01.2023 <i>(v. beta)</i><br/>11.02.2023 <i>Africa Update!</i></span>
     </div>
     <div id="street-view"></div>
     
